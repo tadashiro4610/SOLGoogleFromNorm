@@ -38,13 +38,14 @@ class sfg:
         self.nameDic={} #何バンド加入してるかの辞書
         self.member=[] #バンドメンバー記述用
         # self.songCount=[] #曲数
+        self.canNOTAct=[] #出演できない日
         maxlen=0
 
         #血反吐度
-        fill2=PatternFill(patternType='solid', fgColor='FF0000')
-        fill3=PatternFill(patternType='solid', fgColor='D60000')
-        fill4=PatternFill(patternType='solid', fgColor='B20000')
-        fill5=PatternFill(patternType='solid', fgColor='7E0000')
+        fill2=PatternFill(patternType='solid', fgColor='FFCEBD')
+        fill3=PatternFill(patternType='solid', fgColor='D59387')
+        fill4=PatternFill(patternType='solid', fgColor='AB5851')
+        fill5=PatternFill(patternType='solid', fgColor='811D1B')
 
         ###辞書の更新用関数(ない場合は追加、ある場合はvalueを+1)
         def update_dictionary(dictionary, key):
@@ -108,6 +109,40 @@ class sfg:
                     num=cellNum(i,j)
                     self.ws_save[num]=self.member[j-3]
                 i+=1
+        
+        ###出演可能日
+        #読み取って書込み
+        i=2
+        self.ws_save[cellNum(1,maxlen+3)]="出演可能日"
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=5, max_row=self.ws_open.max_row, max_col=5):
+            for cell in cols:
+                #書込み
+                # print(cell.value)
+                num=cellNum(i,maxlen+3)
+                self.ws_save[num]=cell.value
+                i+=1
+
+        ###出演不可時間
+        i=2
+        self.ws_save[cellNum(1,maxlen+4)]="出演不可時間"
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=6, max_row=self.ws_open.max_row, max_col=6):
+            for cell in cols:
+                #書込み
+                # print(cell.value)
+                num=cellNum(i,maxlen+4)
+                self.ws_save[num]=cell.value
+                i+=1
+
+        ###コメント
+        i=2
+        self.ws_save[cellNum(1,maxlen+5)]="コメント"
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=7, max_row=self.ws_open.max_row, max_col=7):
+            for cell in cols:
+                #書込み
+                # print(cell.value)
+                num=cellNum(i,maxlen+5)
+                self.ws_save[num]=cell.value
+                i+=1
 
         ###メンバーの色分け(血反吐化)
         #セルの値を読み取って、辞書参照、色塗り
@@ -116,6 +151,8 @@ class sfg:
             for cell in cols:
                 for j in range (3,maxlen+3):
                     num=cellNum(i,j)
+                    # print(num)
+                    self.wb_save.save(dir_save)
                     #辞書のvalueによって血反吐度を上げていく
                     if self.ws_save[num].value==None: #Nullの場合は次のセルに行く
                         pass
