@@ -68,7 +68,7 @@ class sfg:
         #読み取って書込み
         i=2
         self.ws_save[cellNum(1,1)]="バンド名"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=2, max_row=self.ws_open.max_row, max_col=2):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=3, max_row=self.ws_open.max_row, max_col=3):
             for cell in cols:
                 #書込み
                 num=cellNum(i,1)
@@ -79,7 +79,7 @@ class sfg:
         #読み取って書込み
         i=2
         self.ws_save[cellNum(1,2)]="曲数"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=4, max_row=self.ws_open.max_row, max_col=4):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=5, max_row=self.ws_open.max_row, max_col=5):
             for cell in cols:
                 #書込み
                 # print(cell.value)
@@ -94,7 +94,7 @@ class sfg:
         #読み取って、辞書に追加して、1バンドごとに書込み
         i=2
         self.ws_save[cellNum(1,3)]="メンバー"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=3, max_row=self.ws_open.max_row, max_col=3):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=4, max_row=self.ws_open.max_row, max_col=4):
             for cell in cols:
                 self.member=[]
                 split_txt=cell.value.splitlines() #改行で区切る(名前/学年/パートになるはず)
@@ -114,7 +114,7 @@ class sfg:
         #読み取って書込み
         i=2
         self.ws_save[cellNum(1,maxlen+3)]="出演可能日"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=5, max_row=self.ws_open.max_row, max_col=5):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=6, max_row=self.ws_open.max_row, max_col=6):
             for cell in cols:
                 #書込み
                 # print(cell.value)
@@ -125,7 +125,7 @@ class sfg:
         ###出演不可時間
         i=2
         self.ws_save[cellNum(1,maxlen+4)]="出演不可時間"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=6, max_row=self.ws_open.max_row, max_col=6):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=7, max_row=self.ws_open.max_row, max_col=7):
             for cell in cols:
                 #書込み
                 # print(cell.value)
