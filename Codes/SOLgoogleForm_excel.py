@@ -136,7 +136,7 @@ class sfg:
         ###コメント
         i=2
         self.ws_save[cellNum(1,maxlen+5)]="コメント"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=7, max_row=self.ws_open.max_row, max_col=7):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=8, max_row=self.ws_open.max_row, max_col=8):
             for cell in cols:
                 #書込み
                 # print(cell.value)
