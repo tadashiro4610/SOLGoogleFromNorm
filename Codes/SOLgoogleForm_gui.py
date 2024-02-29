@@ -7,20 +7,24 @@ class googleFormGui:
     def __init__(self,master):
         self.master=master
         self.master.title("Read Google Form")
-        self.master.geometry("600x100")
+        self.master.geometry("600x150")
 
         #excel生成用に渡す引数
         self.open_dir=None
         self.save_dir=None
+        self.col_dir=None
+        check=tk.BooleanVar()
         #表示する色の初期化
-
 
         ###event処理達
         def generate_event():
             #excelシートの生成
             wb=op.Workbook()
             wb.save(self.save_dir)
-            m=sgf.sfg(self.open_dir,self.save_dir)
+            if check:
+                m=sgf.sfg(self.open_dir,self.save_dir,self.col_dir)
+            else:
+                m=sgf.sfg(self.open_dir,self.save_dir)
             #messageBox
             self.mb=messagebox.showinfo("通知","生成完了")
 
@@ -32,6 +36,15 @@ class googleFormGui:
                 #     self.listbox_files.insert(tk.END, file)
                 self.open_dir=selected_file
                 self.open_dir_label.config(text=selected_file)
+        
+        def open_color_file():
+            file_type = [("読込Excel", "*.xlsx")]
+            selected_file = filedialog.askopenfilename(filetypes=file_type,defaultextension="xlsx")
+            if selected_file:
+                # for file in selected_files:
+                #     self.listbox_files.insert(tk.END, file)
+                self.col_dir=selected_file
+                self.open_color_label.config(text=selected_file)
         
         def save_select_file():
             file_type = [("保存Excel", "*.xlsx")]
@@ -53,24 +66,32 @@ class googleFormGui:
         #label
         self.open_label=tk.Label(text="スプレッドシート")
         self.save_label=tk.Label(text="保存先")
+        self.color_label=tk.Label(text="カラーのコードのエクセル")
         self.open_dir_label=tk.Label(text="読み込むファイルを選択(.xlsx)")
         self.save_dir_label=tk.Label(text="保存ファイルを選択(.xlsx)")
+        self.open_color_label=tk.Label(text="カラーを選択(.xlsx)")
         #entry
 
         #button
         self.open_selectFile_button=tk.Button(text="参照",command=open_select_file)
         self.save_selectFile_button=tk.Button(text="参照",command=save_select_file)
+        self.open_color_button=tk.Button(text="参照",command=open_color_file)
         self.generate_button=tk.Button(text="generate",command=generate_event)
         #scroll,listbox
+        self.color_checkBox=tk.Checkbutton(text="カラーコードのエクセルを使用する",variable=check)
 
         #gridで配置
         self.open_label.grid(row=0,column=0,sticky="e")
         self.save_label.grid(row=1,column=0,sticky="e")
+        self.color_label.grid(row=2,column=0,sticky="e")
         self.open_selectFile_button.grid(row=0,column=1,sticky="e")
         self.save_selectFile_button.grid(row=1,column=1,sticky="e")
+        self.open_color_button.grid(row=2,column=1,sticky="e")
+        self.color_checkBox.grid(row=3,column=2,sticky="w")
         self.open_dir_label.grid(row=0,column=2,sticky="w")
         self.save_dir_label.grid(row=1,column=2,sticky="w")
-        self.generate_button.grid(row=3,column=0,sticky="w")
+        self.open_color_label.grid(row=2,column=2,sticky="w")
+        self.generate_button.grid(row=4,column=0,sticky="w",padx=10,pady=10)
 
         self.master.grid_columnconfigure(0,weight=1,minsize=100)    
         self.master.grid_columnconfigure(1,weight=1,minsize=100)    

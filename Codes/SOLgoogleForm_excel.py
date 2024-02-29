@@ -5,7 +5,7 @@ from openpyxl.styles.alignment import Alignment
 import re
 
 class sfg:
-    def __init__(self,dir_open,dir_save):
+    def __init__(self,dir_open,dir_save,col_dir=None):
         
 
         self.wb_open=op.load_workbook(dir_open)
@@ -13,6 +13,9 @@ class sfg:
         
         self.wb_save=op.load_workbook(dir_save)
         self.ws_save=self.wb_save.worksheets[0]
+        
+        self.wb_col_open=op.load_workbook(col_dir)
+        self.ws_col_open=self.wb_col_open.worksheets[0]
     # ##デバッグ用
     # def __init__(self):
     #     self.wb_open=op.load_workbook("c:/Users/tadas/Downloads/八王子祭エントリー.xlsx")
@@ -41,12 +44,6 @@ class sfg:
         self.canNOTAct=[] #出演できない日
         maxlen=0
 
-        #血反吐度
-        fill2=PatternFill(patternType='solid', fgColor='FFCEBD')
-        fill3=PatternFill(patternType='solid', fgColor='D59387')
-        fill4=PatternFill(patternType='solid', fgColor='AB5851')
-        fill5=PatternFill(patternType='solid', fgColor='811D1B')
-
         ###辞書の更新用関数(ない場合は追加、ある場合はvalueを+1)
         def update_dictionary(dictionary, key):
             if key in dictionary:
@@ -68,7 +65,7 @@ class sfg:
         #読み取って書込み
         i=2
         self.ws_save[cellNum(1,1)]="バンド名"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=3, max_row=self.ws_open.max_row, max_col=3):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=2, max_row=self.ws_open.max_row, max_col=2):
             for cell in cols:
                 #書込み
                 num=cellNum(i,1)
@@ -79,7 +76,7 @@ class sfg:
         #読み取って書込み
         i=2
         self.ws_save[cellNum(1,2)]="曲数"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=5, max_row=self.ws_open.max_row, max_col=5):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=4, max_row=self.ws_open.max_row, max_col=4):
             for cell in cols:
                 #書込み
                 # print(cell.value)
@@ -94,9 +91,10 @@ class sfg:
         #読み取って、辞書に追加して、1バンドごとに書込み
         i=2
         self.ws_save[cellNum(1,3)]="メンバー"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=4, max_row=self.ws_open.max_row, max_col=4):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=3, max_row=self.ws_open.max_row, max_col=3):
             for cell in cols:
                 self.member=[]
+                # print(cell.value)
                 split_txt=cell.value.splitlines() #改行で区切る(名前/学年/パートになるはず)
                 for k in range(len(split_txt)):
                     split=re.split("[/,]",split_txt[k]) #/で区切って最初を取得
@@ -114,7 +112,7 @@ class sfg:
         #読み取って書込み
         i=2
         self.ws_save[cellNum(1,maxlen+3)]="出演可能日"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=6, max_row=self.ws_open.max_row, max_col=6):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=5, max_row=self.ws_open.max_row, max_col=5):
             for cell in cols:
                 #書込み
                 # print(cell.value)
@@ -125,7 +123,7 @@ class sfg:
         ###出演不可時間
         i=2
         self.ws_save[cellNum(1,maxlen+4)]="出演不可時間"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=7, max_row=self.ws_open.max_row, max_col=7):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=6, max_row=self.ws_open.max_row, max_col=6):
             for cell in cols:
                 #書込み
                 # print(cell.value)
@@ -136,7 +134,7 @@ class sfg:
         ###コメント
         i=2
         self.ws_save[cellNum(1,maxlen+5)]="コメント"
-        for cols in self.ws_open.iter_cols(min_row=2, min_col=8, max_row=self.ws_open.max_row, max_col=8):
+        for cols in self.ws_open.iter_cols(min_row=2, min_col=7, max_row=self.ws_open.max_row, max_col=7):
             for cell in cols:
                 #書込み
                 # print(cell.value)
@@ -147,23 +145,39 @@ class sfg:
         ###メンバーの色分け(血反吐化)
         #セルの値を読み取って、辞書参照、色塗り
         i=2
+        max_key=max(self.nameDic.values())
+        print(max_key)
+        hex_color=[]
+        if col_dir==None:
+            for p in range(255, 0, -((255-0)//max_key)):
+                # RGB配列で指定
+                color = (255, p, p)
+                # RBG配列を16進数に変換(openpyxlの仕様上16進数のみ対応)
+                hex_color.append(str.format('{:02x}{:02X}{:02X}', color[0], color[1], color[2]) )
+            # print(hex_color)
+        else:
+            for cols in self.ws_col_open.iter_cols(min_row=1, min_col=1, max_row=self.ws_open.max_row, max_col=1):
+                for p in cols:
+                    if p.fill.fgColor.value=="00000000":
+                        hex_color.append("FFFFFFFF")
+                    else:
+                        hex_color.append(p.fill.fgColor.value)
+            print(hex_color)
+            
+        
         for cols in self.ws_open.iter_cols(min_row=2, min_col=3, max_row=self.ws_open.max_row, max_col=3):
             for cell in cols:
                 for j in range (3,maxlen+3):
                     num=cellNum(i,j)
                     # print(num)
                     self.wb_save.save(dir_save)
-                    #辞書のvalueによって血反吐度を上げていく
-                    if self.ws_save[num].value==None: #Nullの場合は次のセルに行く
-                        pass
-                    elif self.nameDic[self.ws_save[num].value]==2:
-                        self.ws_save[num].fill=fill2
-                    elif self.nameDic[self.ws_save[num].value]==3:
-                        self.ws_save[num].fill=fill3
-                    elif self.nameDic[self.ws_save[num].value]==4:
-                        self.ws_save[num].fill=fill4
-                    elif self.nameDic[self.ws_save[num].value]>=5:
-                        self.ws_save[num].fill=fill5
+                    #辞書のvalueによって血反吐度を上げていく     
+                    for q in range(1,max_key+1):
+                        if self.ws_save[num].value==None:
+                            pass
+                        elif self.nameDic[self.ws_save[num].value]==q:
+                            self.ws_save[num].fill=PatternFill(patternType='solid', fgColor=hex_color[q-1])
+                            print(hex_color[q-1])
                 i+=1
         
         ###出演者と出演数の表示
